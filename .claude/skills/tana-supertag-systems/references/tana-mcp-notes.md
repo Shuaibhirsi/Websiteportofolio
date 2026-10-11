@@ -30,6 +30,12 @@ There is no tool for command nodes, tag command menus or event triggers. These a
 - **AI fields and Ask AI commands need Tana AI** (a paid plan with credits). Confirm this before building them.
 - **Instance fields:** create the target tag first. Values must be real instance nodes, never the tag definition.
 - **Names and descriptions are one line.** Line breaks go into child nodes via Tana Paste.
+- **A `#word` inside plain text becomes a tag.** Write tag names in text without `#` (for example "Life pattern"). Avoid `::` and `[[` in text too, because Tana Paste reads them as fields and references.
+- **"Create-only" still lets you append.** You can't edit existing nodes with Tana Paste, but you can import new children under any existing node. Use this for per-card searches: import the cards, read back the group node IDs from the import result, then import each search under its group.
+- **Imports under the same parent run in call order.** Import ordered siblings (cards 1 to 8) one call at a time. Imports under different parents can run in parallel.
+- **Search nodes can't be read back.** `read_node` shows only the title and `get_children` returns nothing, because the query and results aren't exposed. To verify one: (1) confirm it's a real search with `search_nodes` `{"is": "search"}` plus `ownedBy` (docType "search"); (2) create test nodes and run the equivalent structured query with `search_nodes`; (3) ask the person to glance at one tab in Tana.
+- **Field descriptions and instructions are shown in `get_tag_schema`.** Use it to confirm AI instructions saved verbatim.
+- **Subagents can hit session usage limits mid-workflow.** Research and drafting fan out well, but keep every Tana write in the main loop so a failed agent never leaves half-built structure. Pick up any failed drafting or review step inline.
 
 ## Tana Paste syntax cheat-sheet
 

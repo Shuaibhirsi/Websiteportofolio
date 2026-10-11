@@ -48,7 +48,7 @@ Fan out research when you can: one agent per source cluster, then an adversarial
 4. `get_tag_schema` on every tag and record all field and option IDs. Everything after this references IDs, not names.
 5. `import_tana_paste` for content, with tags and fields by ID (`#[[^tagId]]`, `[[^fieldId]]:: value`). Keep each import bounded: one card or one dashboard section per call is safer than everything at once. No numbered lists. Headings only for long-form text. Each node is one line.
 6. Searches and dashboard: `%%search%%` nodes, with the view on the search node itself (`%%view:table%%` and so on). A parent with `%%view:tabs%%` turns its children into tabs. Searches cannot nest. Operator IDs are in `references/tana-mcp-notes.md`.
-7. Test: create one realistic test node per working tag, fill the fields, link it to a card, and confirm with `search_nodes` that each search would pick it up. Then `trash_node` every test node (soft delete).
+7. Test: put one realistic test node per working tag under a temporary parent, fill the fields, and link each to one card. Search nodes can't be read back through the MCP, so verify in two ways. First, check that every search node exists as docType "search". Second, run the equivalent structured query with `search_nodes` and confirm it returns the test node. Then `trash_node` the temporary parent (soft delete), and ask the person to glance at one tab.
 8. Re-run `get_tag_schema` on all tags and `read_node` (depth 3 or less) on the dashboard. Confirm nothing is empty, mislabelled or missing a source.
 
 ## 5. What the MCP cannot do: hand over a click list
