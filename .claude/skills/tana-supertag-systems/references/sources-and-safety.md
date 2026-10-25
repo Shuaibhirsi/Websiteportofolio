@@ -4,9 +4,9 @@
 
 | Marker | Tier | Counts as | Example |
 |---|---|---|---|
-| 🟢 | High | Peer-reviewed article, NCBI/StatPearls, or the primary book, opened and read directly. A prior session's direct read counts if it was recorded with the URL. | StatPearls table of Erikson's stages |
+| 🟢 | High | Peer-reviewed article, NCBI/StatPearls, or the primary book, opened and read directly. For how a product behaves, its official docs read directly (for Tana: `outliner.tana.inc/learn` and `/help`). A prior session's direct read counts if it was recorded with the URL. | StatPearls table of Erikson's stages; Tana's "Nodes and references" page on trashed originals |
 | 🟡 | Medium | University teaching material or faculty pages read directly; or several independent secondary sources that agree | A lecture deck on Erikson's maladaptations |
-| 🟠 | Low | Search snippets, flashcards, blogs, AI summaries, or any page you could not open | A label found only in student slides |
+| 🟠 | Low | Search snippets, flashcards, blogs, AI summaries, community posts, or any page you could not open | A label found only in student slides; a Tana tip from a two-year-old blog post |
 
 Rules:
 - Never upgrade a tier because a claim "is well known".

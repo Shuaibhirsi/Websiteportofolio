@@ -1,43 +1,53 @@
 # Tana Outliner MCP: notes and pitfalls
 
-## Tools that matter for building systems
+The connector is Tana Outliner's MCP: hosted at `https://app.tana.inc/mcp` (beta, paid plan) or local at `http://localhost:8262/mcp` (needs the desktop app open). The new Tana product (home.tana.inc) has its own, separate MCP that turns writes into proposals for the person to approve. Build, fix and organize with the Outliner one.
+
+## Tools that matter
 
 | Tool | Use | Notes |
 |---|---|---|
-| `list_workspaces`, `list_tags` | Preflight | `list_tags` shows colours, so reuse the palette |
-| `get_tag_schema` | Read fields, option IDs, AI instructions | Run after every batch of field changes; IDs are needed for Tana Paste |
-| `create_tag` | New supertag | name, color (hex OK), description, showCheckbox, aiInstructions, voiceGreeting, voiceInstructions |
-| `add_field_to_tag` | New field | Types: plain, number, date, url, email, checkbox, user, instance (needs sourceTagId), options (needs options[]). isMultiValue, description and aiInstructions are optional |
-| `set_tag_metadata` | Edit tag | Including voice text and AI instructions; null clears |
-| `set_field_metadata` | Edit field | Name, description, AI instructions |
+| `list_workspaces`, `list_tags` | Preflight | `list_tags` shows colours, so reuse the palette. Pass a limit of up to 500. |
+| `get_tag_schema` | Read fields, option IDs, AI and voice set-up | Run after every batch of field changes; IDs are needed for Tana Paste. `includeEditInstructions: false` keeps output small. |
+| `get_children` | Paged children with `docType`, `childCount` and **`inTrash`** | The only cheap way to see whether a listed item (including the original behind a reference) is in the trash. Limit up to 1000. |
+| `read_node` | Outline as Markdown | No `inTrash` flag. Depth 3 or more on big nodes times out or overflows; read in slices. |
+| `search_nodes` | Structured queries | Up to 1000 results on request. `linksTo` takes at most 20 IDs. `hasType: "SYS_T01"` = supertag definitions, `"SYS_T02"` = field definitions; `is` covers field, command, search, chat, entity and more. |
+| `create_tag` | New supertag | Name, color (hex OK), description, showCheckbox, aiInstructions, voiceGreeting, voiceInstructions |
+| `add_field_to_tag` | New field | Types: plain, number, date, url, email, checkbox, user, instance (needs sourceTagId), options (needs options[]). isMultiValue, description and aiInstructions are optional. |
+| `set_tag_metadata`, `set_field_metadata` | Edit a tag or field | Includes voice text and AI instructions; null clears |
 | `set_tag_checkbox` | Done checkbox | Can map done to an options field value |
-| `import_tana_paste` | Create content | Create-only; bounded size; returns created node IDs |
-| `edit_node` | Rename or describe a node | Search-and-replace semantics; HTML formatting, not markdown |
-| `set_field_content`, `set_field_option` | Fill fields on existing nodes | Use for test nodes |
-| `search_nodes` | Verify searches would match | Structured JSON query, not Tana Paste |
-| `trash_node` | Soft delete | Clean up test nodes |
+| `import_tana_paste` | Create content | Create-only; keep it small; returns the created node IDs |
+| `edit_node` | Rename a node or edit its description | Search-and-replace semantics; HTML formatting, not markdown |
+| `set_field_content`, `set_field_option`, `tag`, `check_node` | Fill fields or tag existing nodes | Use for test nodes |
+| `move_node` | Move a node; `sourceParentId` picks which parent to move it from | **Restores a trashed node:** moving it out of `<ws>_TRASH` keeps its ID, so every reference heals |
+| `trash_node` | Soft delete | Only on nodes you have proved are owned where you think (see pitfalls) |
 
-There is no tool for command nodes, tag command menus or event triggers. These are UI steps for the person.
+There is no tool for: command nodes, a tag's command menu or event triggers, tag configuration (audio-enabled, post-process command), Merge node, or emptying the trash. These are UI steps for the person.
 
 ## Pitfalls seen in practice
 
-- **Field order = creation order.** Add fields to one tag sequentially. Parallel calls on the same tag scramble the order.
-- **Tana Paste cannot update.** To change a node made by paste, use `edit_node` or the field tools, or trash and re-import. Plan content so it is right the first time: draft, review, then paste.
+- **A reference row reports the original's ID.** Children of a list that holds references come back with the definition's own ID, `docType` and owner. `trash_node`, `edit_node` or `move_node` (without `sourceParentId`) on that ID acts on the original. To drop a reference from a list, ask the person to use Delete reference in the UI.
+- **`childOf` the trash, recursive, returns live nodes too:** anything referenced from inside a trashed subtree. That holds even with `includeRefs: false`. Judge trashed-ness only by the `inTrash` field.
+- **Field order = creation order.** Add fields to one tag one at a time. Parallel calls on the same tag scramble the order.
+- **Reuse fields before creating them.** Search `{"and":[{"is":"field"},{"textContains":"Date"}]}` first. Same-name fields on different tags are separate definitions and split every search and view. (The inner-work build created a second Date, Linked stage and ✨ Reflection; avoid repeating that.)
+- **Tana Paste cannot update.** To change a node made by paste, use `edit_node` or the field tools, or trash and re-import. Draft, review, then paste.
 - **Searches over new tags are empty.** That's expected. Prove them with a test node, then trash the test node.
-- **`read_node` depth 4+ can time out.** Use depth 3 or less and read sub-trees separately.
 - **Write approval.** "No approval received" means the person never allowed the tool. Ask; don't loop.
-- **Two Tana connectors may exist.** The Outliner MCP (app.tana.inc) writes directly. The meetings-focused Tana MCP (home.tana.inc) turns writes into proposals the person approves. Build systems with the Outliner one.
-- **AI fields and Ask AI commands need Tana AI** (a paid plan with credits). Confirm this before building them.
+- **Triggers don't fire through the API.** On added, On removed and child-added commands are skipped when the MCP tags or creates nodes. Run the equivalent steps yourself, or tell the person.
+- **AI fields and Ask AI commands need Tana AI** (a paid plan with credits). Confirm before building them.
 - **Instance fields:** create the target tag first. Values must be real instance nodes, never the tag definition.
-- **Names and descriptions are one line.** Line breaks go into child nodes via Tana Paste.
-- **A `#word` inside plain text becomes a tag.** Write tag names in text without `#` (for example "Life pattern"). Avoid `::` and `[[` in text too, because Tana Paste reads them as fields and references.
-- **"Create-only" still lets you append.** You can't edit existing nodes with Tana Paste, but you can import new children under any existing node. Use this for per-card searches: import the cards, read back the group node IDs from the import result, then import each search under its group.
-- **Imports under the same parent run in call order.** Import ordered siblings (cards 1 to 8) one call at a time. Imports under different parents can run in parallel.
-- **Search nodes can't be read back.** `read_node` shows only the title and `get_children` returns nothing, because the query and results aren't exposed. To verify one: (1) confirm it's a real search with `search_nodes` `{"is": "search"}` plus `ownedBy` (docType "search"); (2) create test nodes and run the equivalent structured query with `search_nodes`; (3) ask the person to glance at one tab in Tana.
-- **Field descriptions and instructions are shown in `get_tag_schema`.** Use it to confirm AI instructions saved verbatim.
-- **Subagents can hit session usage limits mid-workflow.** Research and drafting fan out well, but keep every Tana write in the main loop so a failed agent never leaves half-built structure. Pick up any failed drafting or review step inline.
+- **Names and descriptions are one line.** Line breaks go into child nodes through Tana Paste.
+- **A `#word` in plain text becomes a tag.** Write tag names in text without `#`. Avoid `::` and `[[` in text too.
+- **"Create-only" still lets you append.** You can import new children under any existing node. Use this for per-card searches and for filling hub groups with references.
+- **Imports under the same parent run in call order.** Import ordered siblings one call at a time. Imports under different parents can run in parallel.
+- **Search nodes can't be read back.** `read_node` shows only the title. To verify one:
+  1. Confirm it is a real search: `{"is":"search"}` plus `ownedBy` (docType "search").
+  2. Run the equivalent structured query against test nodes.
+  3. Ask the person to glance at it.
+- **Big results:** trash listings, `IS FIELD` and `IS COMMAND` overflow the tool output. Save them to the scratchpad and process them with `python3 -I`.
+- **Tag configuration is hidden.** A tag's children are field tuples only. Commands, triggers and post-process settings don't show, so ask the person to check the config panel.
+- **Subagents can hit session usage limits mid-workflow.** Keep every Tana write in the main loop.
 
-## Tana Paste syntax cheat-sheet
+## Tana Paste cheat-sheet (verified against `/learn/features/tana-paste`)
 
 ```
 - Parent node %%view:tabs%%
@@ -50,9 +60,17 @@ There is no tool for command nodes, tag command menus or event triggers. These a
     - [[^instanceFieldId]]:: [[^nodeId]]
     - [[^checkboxFieldId]]:: [X]
     - [[^urlFieldId]]:: https://example.org
+    - !! A heading
     - Plain child line
+  - [[^existingNodeId]]
 - [ ] A todo
 ```
+
+- A row that is only `[[^id]]` becomes a reference to that node, and the original keeps its owner (verified 25 Oct 2026). Use it to fill hub groups. The import result lists reference rows under the original's ID, so new nodes are the ones with new IDs.
+- `[[name^id]]` falls back to the name if the ID doesn't exist. A bare `[[^id]]` with an unknown ID links to "undefined".
+- Dates: `[[date:2021-02-01 20:30]]`, `[[date:2021-W02]]`, `[[date:2021-02]]`, durations `[[date:2021-02/2021-04-05]]`.
+- Formatting: `**bold**`, `__italic__`, `^^highlight^^`, links `[name](https://…)`.
+- Tana Paste is for small results, not bulk import.
 
 Views: `%%view:list|table|cards|tabs|calendar|sidemenu%%`, placed on the parent whose children are shown (for a search, on the search node).
 
@@ -76,9 +94,11 @@ Views: `%%view:list|table|cards|tabs|calendar|sidemenu%%`, placed on the parent 
 | Child of | `[[^SYS_V53]]:: [[^nodeId]]` |
 | Owned by | `[[^SYS_V55]]:: [[^nodeId]]` |
 
-Searches cannot nest. A search inside a card that should show "everything linked to this card" uses LINKS TO the card's own node ID, or the instance field equal to the card's ID. The card has to exist first, so import cards, read back their IDs, then import each card's searches under it.
+Searches cannot nest. To make a search inside a card show "everything linked to this card", use LINKS TO with the card's own node ID, or set the instance field equal to the card's ID. The card has to exist first: import the cards, read back their IDs, then import each card's searches under it. Keyword operators such as `IS TAG`, `CREATED LAST 30 DAYS` and `NOT DONE` are written as plain rows.
 
 ## Useful system commands (for the click list)
 
 - "Run AI fields" (`SYS_M016`): wrap it in a command node on each working tag.
 - "Insert relative date" (`SYS_M026`): sets today's date in "On added" triggers.
+- "Text processing agent" (`SYS_M031`): the default meeting post-process command.
+- "Ask AI" (`SYS_M001`).
