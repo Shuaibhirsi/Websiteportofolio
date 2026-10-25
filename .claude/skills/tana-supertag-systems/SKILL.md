@@ -12,6 +12,7 @@ Most requests are one of three jobs, and many are a mix:
 | **Build** | "Make me a system for X in Tana" | this file, sections 4 to 6 |
 | **Repair** | "I cleaned up and links broke", "check my trash" | `references/repair-playbook.md` |
 | **Organize** | "Help me organize my second brain", "sort my fields and commands", "my daily page is messy" | `references/organize-playbook.md` |
+| **Scan** | "Find my loose notes", "process my Inbox", "connect notes to what I have" | the separate `tana-knowledge-scan` skill |
 
 How Tana itself behaves (owners, references, trash, Schema, fields, commands, searches) is in `references/tana-concepts.md`, taken from Tana's official docs. Read it before the first write of a session.
 
@@ -24,6 +25,7 @@ How Tana itself behaves (owners, references, trash, Schema, fields, commands, se
 5. **A reference row reports the original's ID.** Never `trash_node`, `edit_node` or `move_node` (without `sourceParentId`) an ID you got from a list of references. Doing so changes the original.
 6. **Back up before a cleanup.** Ask for Export workspace as JSON before repairs or large reorganizations.
 7. **Log every change** (ID, before, after) so it can be undone, and never claim a UI-only step is done.
+8. **Design in supertags.** Before proposing anything, run the design check in `references/second-brain-design.md`: reuse, link, surface in a template, keep friction low.
 
 ## 1. Preflight (read before you write)
 
@@ -80,6 +82,7 @@ Verification falls back instead of blocking: an unreadable source becomes a labe
 ## 5. Build: design and build order
 
 Design:
+- **First read `references/second-brain-design.md` and answer its design check.** Every structure lives in a supertag or its template, reuses the person's own tags and fields, links records with instance fields, and surfaces through searches in templates. Never build one-off structures on a single node.
 - Split reference cards (pre-filled instances) from working records (what the person logs). Link records to cards with `instance` fields, so each card can hold live searches of everything linked to it.
 - Use the workspace palette and emoji-first descriptions and options. Show progress as options (▱▱▱▱▱ to ▰▰▰▰▰) and status as 🔴/🟡/🟢. Include a ❔ "Not sure" option, and allow several values where the honest answer can be "several".
 - Make each field description say what to write, with a short example in brackets.
@@ -138,6 +141,7 @@ Finish with a short report:
 
 ## Reference files
 
+- `references/second-brain-design.md`: the capture → connect → surface loop, design principles and the design check to run before every proposal.
 - `references/tana-concepts.md`: how Tana Outliner works, with sources: owners and references, trash, supertags, fields, commands, searches, workspace layout, templates, schema audit, MCP.
 - `references/repair-playbook.md`: the trash and broken-link audit, audit traps, the repair table and verification.
 - `references/organize-playbook.md`: second-brain principles, the hub pattern (with Shuaib's categories as a worked example), the classification procedure and upkeep.
