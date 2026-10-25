@@ -18,7 +18,7 @@ The connector is Tana Outliner's MCP: hosted at `https://app.tana.inc/mcp` (beta
 | `import_tana_paste` | Create content | Create-only; keep it small; returns the created node IDs |
 | `edit_node` | Rename a node or edit its description | Search-and-replace semantics; HTML formatting, not markdown |
 | `set_field_content`, `set_field_option`, `tag`, `check_node` | Fill fields or tag existing nodes | Use for test nodes |
-| `move_node` | Move a node; `sourceParentId` picks which parent to move it from | **Restores a trashed node:** moving it out of `<ws>_TRASH` keeps its ID, so every reference heals |
+| `move_node` | Move a node; `sourceParentId` picks which parent to move it from | **Restores a trashed node:** moving it out of `<ws>_TRASH` keeps its ID, so every reference heals. With `keepSourceReference: true`, the node moves to a new owner and a reference stays where it was: the safe way to send definitions to the Schema. `position: before/after` with `referenceNodeId` orders your own new nodes. |
 | `trash_node` | Soft delete | Only on nodes you have proved are owned where you think (see pitfalls) |
 
 There is no tool for: command nodes, a tag's command menu or event triggers, tag configuration (audio-enabled, post-process command), Merge node, or emptying the trash. These are UI steps for the person.
@@ -44,6 +44,7 @@ There is no tool for: command nodes, a tag's command menu or event triggers, tag
   2. Run the equivalent structured query against test nodes.
   3. Ask the person to glance at it.
 - **Big results:** trash listings, `IS FIELD` and `IS COMMAND` overflow the tool output. Save them to the scratchpad and process them with `python3 -I`.
+- **The search index lags after moves.** Right after a `move_node`, `ownedBy` queries can still return the old owner for a few items, while their breadcrumb already shows the new one. Trust the breadcrumb, or re-query a little later.
 - **Tag configuration is hidden.** A tag's children are field tuples only. Commands, triggers and post-process settings don't show, so ask the person to check the config panel.
 - **Subagents can hit session usage limits mid-workflow.** Keep every Tana write in the main loop.
 

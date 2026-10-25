@@ -47,7 +47,7 @@ His hub is Home → DASHBOAD → **Supertags, Fields, Searches**. His categories
 - Date fields go to 📅 and URL fields to 🔗, whatever their tag. That was already his own rule.
 - A self-contained system, such as the 🧭 inner-work tags, keeps its fields together.
 - His own commands live under Home → **SH's Commands**, grouped by the place they serve ("In #link Super tag:", "Daily page"). His saved searches live under Home → **⏩ Fast Info**.
-- His older **Core Supertags** and **Fields → Structure → ALL Fields(Chaos)** sections *own* definitions. That is the risky pattern. Leave them alone unless he approves moving the definitions to the Schema (see `repair-playbook.md`).
+- His older **Core Supertags** and **Fields → Structure → ALL Fields(Chaos)** sections used to *own* definitions. On 25 Oct 2026, with his approval, all 45 tags and 85 fields moved to the Schema, and those sections now hold references. If new definitions appear there, they are new ad-hoc creations: offer to move them the same way.
 
 ## Procedure
 
