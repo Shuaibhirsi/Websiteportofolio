@@ -18,14 +18,19 @@ The connector is Tana Outliner's MCP: hosted at `https://app.tana.inc/mcp` (beta
 | `import_tana_paste` | Create content | Create-only; keep it small; returns the created node IDs |
 | `edit_node` | Rename a node or edit its description | Search-and-replace semantics; HTML formatting, not markdown |
 | `set_field_content`, `set_field_option`, `tag`, `check_node` | Fill fields or tag existing nodes | Use for test nodes |
-| `move_node` | Move a node; `sourceParentId` picks which parent to move it from | **Restores a trashed node:** moving it out of `<ws>_TRASH` keeps its ID, so every reference heals. With `keepSourceReference: true`, the node moves to a new owner and a reference stays where it was: the safe way to send definitions to the Schema. `position: before/after` with `referenceNodeId` orders your own new nodes. |
+| `move_node` | Move a node; `sourceParentId` picks which parent to move it from | **Restores a trashed node:** moving it out of `<ws>_TRASH` keeps its ID, so every reference heals. With `keepSourceReference: true`, the node moves to a new owner and a reference stays where it was: the safe way to send definitions to the Schema. `position: before/after` with `referenceNodeId` orders your own new nodes. **Reorders fields:** a tag's children are its field tuples (`docType: tuple`), in display order; move one inside the tag with `position: after` (verified 25 Oct 2026). **Cannot target the trash** ("use trash_node instead"). |
 | `trash_node` | Soft delete | Only on nodes you have proved are owned where you think (see pitfalls) |
 
-There is no tool for: command nodes, a tag's command menu or event triggers, tag configuration (audio-enabled, post-process command), Merge node, or emptying the trash. These are UI steps for the person.
+There is no tool for: command nodes, a tag's command menu or event triggers, tag configuration (audio-enabled, post-process command, **related content**), a field's type or source supertag, Merge node, or emptying the trash. These are UI steps for the person.
 
 ## Pitfalls seen in practice
 
-- **A reference row reports the original's ID.** Children of a list that holds references come back with the definition's own ID, `docType` and owner. `trash_node`, `edit_node` or `move_node` (without `sourceParentId`) on that ID acts on the original. To drop a reference from a list, ask the person to use Delete reference in the UI.
+- **A reference row reports the original's ID.** Children of a list that holds references come back with the definition's own ID, `docType` and owner. `trash_node`, `edit_node` or `move_node` (without `sourceParentId`) on that ID acts on the original. To drop a reference from a list (verified 25 Oct 2026):
+  1. Import a temporary node you own, e.g. "🧹 Rows to remove (temporary)".
+  2. `move_node` the reference's ID with `sourceParentId: <list group>` into that node. Only the reference moves; the original keeps its owner (check `inTrash`/breadcrumb).
+  3. `trash_node` the temporary node.
+
+  A dead link ("unknown (or no access)") can't be moved ("Node not found"): the person deletes it in the UI.
 - **`childOf` the trash, recursive, returns live nodes too:** anything referenced from inside a trashed subtree. That holds even with `includeRefs: false`. Judge trashed-ness only by the `inTrash` field.
 - **Field order = creation order.** Add fields to one tag one at a time. Parallel calls on the same tag scramble the order.
 - **Reuse fields before creating them.** Search `{"and":[{"is":"field"},{"textContains":"Date"}]}` first. Same-name fields on different tags are separate definitions and split every search and view. (The inner-work build created a second Date, Linked stage and ✨ Reflection; avoid repeating that.)
@@ -39,10 +44,12 @@ There is no tool for: command nodes, a tag's command menu or event triggers, tag
 - **A `#word` in plain text becomes a tag.** Write tag names in text without `#`. Avoid `::` and `[[` in text too.
 - **"Create-only" still lets you append.** You can import new children under any existing node. Use this for per-card searches and for filling hub groups with references.
 - **Imports under the same parent run in call order.** Import ordered siblings one call at a time. Imports under different parents can run in parallel.
-- **Search nodes can't be read back.** `read_node` shows only the title. To verify one:
-  1. Confirm it is a real search: `{"is":"search"}` plus `ownedBy` (docType "search").
-  2. Run the equivalent structured query against test nodes.
-  3. Ask the person to glance at it.
+- **Search nodes can't be read back.** `read_node` on the search shows only the title, and the results are not visible. To verify one:
+  1. Confirm it is a real search: `get_children` on its parent shows `docType: "search"`.
+  2. Read its conditions: the import result lists the condition nodes' IDs, and `read_node` on each shows the condition (e.g. `**NOT**: **Status**: 🟡 Noticing`).
+  3. Run the equivalent `search_nodes` query so you know what it should show, and ask the person to compare.
+- **PARENT imports as text.** `[[^dueDateId]]:: PARENT+1` is stored as the plain text "PARENT+1". Tana's docs write PARENT±n as typed text, but whether an imported one resolves is unconfirmed: ask the person to check, and if the box is empty, to re-pick PARENT in the query. Avoid PARENT when a non-relative query does the job.
+- **Related content** (the boxes beside a node, e.g. on the daily page) can't be written through the MCP. Import the search as a direct child of a node with that tag (e.g. today's day node), then the person right-clicks its title → Move search to related content.
 - **Big results:** trash listings, `IS FIELD` and `IS COMMAND` overflow the tool output. Save them to the scratchpad and process them with `python3 -I`.
 - **The search index lags after moves.** Right after a `move_node`, `ownedBy` queries can still return the old owner for a few items, while their breadcrumb already shows the new one. Trust the breadcrumb, or re-query a little later.
 - **Tag configuration is hidden.** A tag's children are field tuples only. Commands, triggers and post-process settings don't show, so ask the person to check the config panel.

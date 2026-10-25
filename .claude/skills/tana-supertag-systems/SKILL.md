@@ -1,6 +1,6 @@
 ---
 name: tana-supertag-systems
-description: Build, repair and organize a Tana Outliner workspace through the Tana Outliner MCP. Covers research-backed supertag systems (tags, typed fields, AI fields, voice, reference cards, live searches, dashboards); auditing the trash and fixing broken references, trashed tags, fields or commands, duplicate templates and dead links; and organizing a second brain so supertags, fields, commands and searches sit in the person's own category structure. Use this whenever someone mentions Tana, supertags, fields, live searches, commands, their trash, broken or trash-can links, a messy schema, cleaning up, PARA, GTD or a "second brain", or hands over a Tana build plan, even if they never say "supertag". Use it especially when content must be research-backed or touches mental health and self-reflection.
+description: Build, repair and organize a Tana Outliner workspace through the Tana Outliner MCP. Covers research-backed supertag systems (tags, typed fields, AI fields, voice, reference cards, live searches, dashboards); auditing the trash and fixing broken references, trashed tags, fields or commands, duplicate templates and dead links; and organizing a second brain so supertags, fields, commands and searches sit in the person's own category structure. Use this whenever someone mentions Tana, supertags, fields, live searches, commands, their trash, broken or trash-can links, a messy schema or daily page, cleaning up, PARA, GTD or a "second brain", or hands over a Tana build plan, even if they never say "supertag". Use it especially when content must be research-backed or touches mental health and self-reflection.
 ---
 
 # Tana: build, repair, organize
@@ -11,7 +11,7 @@ Most requests are one of three jobs, and many are a mix:
 |---|---|---|
 | **Build** | "Make me a system for X in Tana" | this file, sections 4 to 6 |
 | **Repair** | "I cleaned up and links broke", "check my trash" | `references/repair-playbook.md` |
-| **Organize** | "Help me organize my second brain", "sort my fields and commands" | `references/organize-playbook.md` |
+| **Organize** | "Help me organize my second brain", "sort my fields and commands", "my daily page is messy" | `references/organize-playbook.md` |
 
 How Tana itself behaves (owners, references, trash, Schema, fields, commands, searches) is in `references/tana-concepts.md`, taken from Tana's official docs. Read it before the first write of a session.
 
@@ -65,6 +65,7 @@ Follow `references/organize-playbook.md`. The short version:
 4. Show the plan, or the result if the person already asked you to build it. Fill each group with reference rows (`- [[^id]]`), one import per group. Mirror the same emoji categories across Supertags, Fields, Commands and Searches. To place a new group, `move_node` it with `position: before/after`; only ever move group nodes you created.
 5. Verify with `get_children`, and add "new tags" and "new fields" searches for monthly upkeep.
 6. Offer second-brain advice (capture path, PARA links, duplicate fields to merge) as advice, not edits.
+7. For the daily page, keep the `#day` template nearly empty and put live lists in Related content on the side. See "The daily page" in the playbook.
 
 ## 4. Build: research with confidence tiers
 
@@ -100,9 +101,10 @@ Build order:
 There is no MCP tool for:
 - command nodes, or a tag's command menu;
 - event triggers (On added, On removed, checked);
-- tag configuration such as audio-enabled tags and post-process commands;
+- tag configuration such as audio-enabled tags, post-process commands and Related content;
+- a field's type or source supertag;
 - Merge node;
-- Delete reference;
+- deleting a dead "unknown (or no access)" link (a live reference row can be removed: see `references/tana-mcp-notes.md`);
 - emptying the trash.
 
 Build everything else, then give a numbered click-by-click list. Include the "Run AI fields" command, Ask AI prompts written out in full, and triggers such as "On added: set Status to 🟡, set First noticed to today". Remember that triggers don't fire for nodes the MCP creates. Never claim these steps are done.
