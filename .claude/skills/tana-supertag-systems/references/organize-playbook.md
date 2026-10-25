@@ -49,15 +49,24 @@ His hub is Home → DASHBOAD → **Supertags, Fields, Searches**. His categories
 - His own commands live under Home → **SH's Commands**, grouped by the place they serve ("In #link Super tag:", "Daily page"). His saved searches live under Home → **⏩ Fast Info**.
 - His older **Core Supertags** and **Fields → Structure → ALL Fields(Chaos)** sections used to *own* definitions. On 25 Oct 2026, with his approval, all 45 tags and 85 fields moved to the Schema, and those sections now hold references. If new definitions appear there, they are new ad-hoc creations: offer to move them the same way.
 
-## The daily page: write in the middle, see on the side
+## The daily page: let the `#day` supertag do the work
 
-People stop using a daily page when its template stacks dashboards on every new day. Aim for this shape:
+The point of supertags is to define something once and reuse it everywhere, so build the daily page in the `#day` tag, never as one-off nodes on a single day. (A first attempt here put searches on one day and asked the person to move them by hand. They rejected it, rightly.)
 
-- **Middle (the `#day` template):** almost empty, so the day is space to write. At most one short prompt block (e.g. "🌙 Daily close" with 3–4 questions). The template is the `#day` tag's non-field children. Moving them out of the tag (`move_node` into an archive node such as "🗄️ Old day dashboards") stops them appearing on new days. Days already written keep their own copies, which have different IDs.
-- **Side (Related content on `#day`):** the live lists, as search nodes: open tasks due today or overdue, open loops of a working tag, experiments not done. Related content can't be written through the MCP. Import each search as a direct child of today's day node (`get_or_create_calendar_node`), then the person right-clicks the title → Move search to related content (pick the `#day` tag).
-- **Capture flow:** the person writes "Title #tag" on the day and fills the first fields. Put each working tag's quick fields first and the deeper and ✨ AI fields last (reorder by moving the tag's field tuples). A side search without a status condition, or with "NOT 🟡, NOT 🟢" instead of "= 🔴", shows a new entry before its status is set.
+- **Find the person's own daily tags first.** Look for morning and evening tags they already use (`search_nodes` for instances), e.g. #Daily prep or #Journaling. Reuse them before creating anything.
+- **The `#day` template** is the tag's non-field children; every new day gets a copy. Put in:
+  - tagged nodes of their daily tags, e.g. `- ☀️ Morning #[[^dailyPrepId]]` and `- 🌙 Evening #[[^journalingId]]`. Their fields appear on each day, ready to fill;
+  - a few live searches as direct children, using PARENT for "this day" (e.g. tasks with Due date < PARENT+1).
+- **Clear out the old.** Move old template children to an archive node such as "🗄️ Old day dashboards" with `move_node`. Days already written keep their own copies, which have different IDs.
+- **Link working tags in with shared fields.** Add existing instance fields to the daily tag (`- [[^fieldId]]::`, e.g. Linked pattern → `#life pattern`) rather than new look-alikes. In a field, typing a new title creates the linked node, so writing on the day creates the record.
+- **Put quick fields first** on each working tag, with the deeper and ✨ AI fields last (reorder by moving the tag's field tuples).
+- **Today's page** was created before the change, so it doesn't get the new template. Import the same nodes onto it so it matches.
+- **Check every template import:** auto-initialized dates get baked in (see `tana-mcp-notes.md`).
 
-Worked example (Shuaib, 25 Oct 2026): the `#Day` template had 4 dashboards (Dashboard, 📊 Dashboard, 📊 Day Dashboard, 📊 Day Dashboard — Live). They now sit in DASHBOAD → 🗄️ Old day dashboards, and the template keeps only 🌙 Daily close. The side boxes are 🔴 Still on autopilot (`#life pattern`), 🧪 Experiments to try (`#corrective experience`, NOT DONE) and 🎯 Tasks today (`#task`, NOT DONE, Due date < PARENT+1).
+Worked example (Shuaib, 25 Oct 2026):
+- The `#Day` template had 4 stacked dashboards. They now sit in DASHBOAD → 🗄️ Old day dashboards.
+- The template is now ☀️ Morning #Daily prep, 🌙 Evening #Journaling, 🔴 Still on autopilot (`#life pattern`, NOT 🟡, NOT 🟢) and 🎯 Tasks today (`#task`, NOT DONE, Due date < PARENT+1).
+- `#Journaling` gained the shared Linked pattern field plus a new Linked experiment field (instance of `#corrective experience`).
 
 ## Procedure
 

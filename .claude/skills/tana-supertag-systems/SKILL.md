@@ -65,7 +65,7 @@ Follow `references/organize-playbook.md`. The short version:
 4. Show the plan, or the result if the person already asked you to build it. Fill each group with reference rows (`- [[^id]]`), one import per group. Mirror the same emoji categories across Supertags, Fields, Commands and Searches. To place a new group, `move_node` it with `position: before/after`; only ever move group nodes you created.
 5. Verify with `get_children`, and add "new tags" and "new fields" searches for monthly upkeep.
 6. Offer second-brain advice (capture path, PARA links, duplicate fields to merge) as advice, not edits.
-7. For the daily page, keep the `#day` template nearly empty and put live lists in Related content on the side. See "The daily page" in the playbook.
+7. Build the daily page in the `#day` supertag, never as one-off nodes on a single day. Its template reuses the person's own daily tags and holds live searches that use PARENT. See "The daily page" in the playbook.
 
 ## 4. Build: research with confidence tiers
 

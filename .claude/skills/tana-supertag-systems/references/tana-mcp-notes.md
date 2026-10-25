@@ -12,7 +12,7 @@ The connector is Tana Outliner's MCP: hosted at `https://app.tana.inc/mcp` (beta
 | `read_node` | Outline as Markdown | No `inTrash` flag. Depth 3 or more on big nodes times out or overflows; read in slices. |
 | `search_nodes` | Structured queries | Up to 1000 results on request. `linksTo` takes at most 20 IDs. `hasType: "SYS_T01"` = supertag definitions, `"SYS_T02"` = field definitions; `is` covers field, command, search, chat, entity and more. |
 | `create_tag` | New supertag | Name, color (hex OK), description, showCheckbox, aiInstructions, voiceGreeting, voiceInstructions |
-| `add_field_to_tag` | New field | Types: plain, number, date, url, email, checkbox, user, instance (needs sourceTagId), options (needs options[]). isMultiValue, description and aiInstructions are optional. |
+| `add_field_to_tag` | New field | Always creates a **new** definition; to reuse an existing field, import `- [[^fieldId]]::` under the tag instead. Types: plain, number, date, url, email, checkbox, user, instance (needs sourceTagId), options (needs options[]). isMultiValue, description and aiInstructions are optional. |
 | `set_tag_metadata`, `set_field_metadata` | Edit a tag or field | Includes voice text and AI instructions; null clears |
 | `set_tag_checkbox` | Done checkbox | Can map done to an options field value |
 | `import_tana_paste` | Create content | Create-only; keep it small; returns the created node IDs |
@@ -33,7 +33,7 @@ There is no tool for: command nodes, a tag's command menu or event triggers, tag
   A dead link ("unknown (or no access)") can't be moved ("Node not found"): the person deletes it in the UI.
 - **`childOf` the trash, recursive, returns live nodes too:** anything referenced from inside a trashed subtree. That holds even with `includeRefs: false`. Judge trashed-ness only by the `inTrash` field.
 - **Field order = creation order.** Add fields to one tag one at a time. Parallel calls on the same tag scramble the order.
-- **Reuse fields before creating them.** Search `{"and":[{"is":"field"},{"textContains":"Date"}]}` first. Same-name fields on different tags are separate definitions and split every search and view. (The inner-work build created a second Date, Linked stage and ✨ Reflection; avoid repeating that.)
+- **Reuse fields before creating them.** Search `{"and":[{"is":"field"},{"textContains":"Date"}]}` first, and attach a match with `- [[^fieldId]]::` (see "Reuse an existing field" below). Same-name fields on different tags are separate definitions and split every search and view. (The inner-work build created a second Date, Linked stage and ✨ Reflection; avoid repeating that.)
 - **Tana Paste cannot update.** To change a node made by paste, use `edit_node` or the field tools, or trash and re-import. Draft, review, then paste.
 - **Searches over new tags are empty.** That's expected. Prove them with a test node, then trash the test node.
 - **Write approval.** "No approval received" means the person never allowed the tool. Ask; don't loop.
@@ -48,8 +48,11 @@ There is no tool for: command nodes, a tag's command menu or event triggers, tag
   1. Confirm it is a real search: `get_children` on its parent shows `docType: "search"`.
   2. Read its conditions: the import result lists the condition nodes' IDs, and `read_node` on each shows the condition (e.g. `**NOT**: **Status**: 🟡 Noticing`).
   3. Run the equivalent `search_nodes` query so you know what it should show, and ask the person to compare.
-- **PARENT imports as text.** `[[^dueDateId]]:: PARENT+1` is stored as the plain text "PARENT+1". Tana's docs write PARENT±n as typed text, but whether an imported one resolves is unconfirmed: ask the person to check, and if the box is empty, to re-pick PARENT in the query. Avoid PARENT when a non-relative query does the job.
-- **Related content** (the boxes beside a node, e.g. on the daily page) can't be written through the MCP. Import the search as a direct child of a node with that tag (e.g. today's day node), then the person right-clicks its title → Move search to related content.
+- **PARENT works as text.** `[[^dueDateId]]:: PARENT+1` is stored as the plain text "PARENT+1" and resolves: under LT on a day node it listed open tasks due before tomorrow (verified 25 Oct 2026). In a `#day` template, PARENT is each day.
+- **Results show up after viewing.** Once the person has opened the page, a search's results appear as its children: `read_node` at depth 2 lists them. This is the best check that a search works.
+- **Related content** (the boxes beside a node) can't be written through the MCP. Prefer the supertag's template (see "Reuse an existing field" and the daily page in `organize-playbook.md`). Use related content only when the person asks for side boxes; then they move the search there in the UI.
+- **Reuse an existing field on another tag:** import `- [[^fieldId]]::` under the tag definition. This adds a field tuple that points at the existing definition: same ID, same options, and searches and views cover both tags (verified 25 Oct 2026). Use this instead of `add_field_to_tag`, which always creates a new definition. Its description is shared, so word it for every tag that uses it.
+- **Tagged nodes in a template get auto-filled.** Importing "🌙 Evening #Journaling" into the `#day` template filled its auto-initialized date field with today's date, which every new day would copy. Trash that field tuple on the template node; check `read_node` after every template import.
 - **Big results:** trash listings, `IS FIELD` and `IS COMMAND` overflow the tool output. Save them to the scratchpad and process them with `python3 -I`.
 - **The search index lags after moves.** Right after a `move_node`, `ownedBy` queries can still return the old owner for a few items, while their breadcrumb already shows the new one. Trust the breadcrumb, or re-query a little later.
 - **Tag configuration is hidden.** A tag's children are field tuples only. Commands, triggers and post-process settings don't show, so ask the person to check the config panel.
