@@ -83,6 +83,17 @@ Content width: Auto gives Full width for table, cards, calendar and tabs, and Me
   - related content and its placement;
   - focus modes and command menus.
 
+### Building side boxes for the day page
+
+1. Import each search as a direct child of a **past** day page that already has content. PARENT then means that day. Don't use an empty today: its template may only fill on first open, and adding nodes could stop that.
+2. Read back each condition node (`read_node` on the IDs from the import result).
+3. Work out what each box should show with `search_nodes`, e.g. `onDate {date, fieldId, overlaps: true}` for meetings, and give the person one concrete check per box.
+4. Click list for the person:
+   - right-click each title → Move search to related content (pick the `#day` tag);
+   - set review boxes to ⋯ → Prefer area → Bottom;
+   - set Display and Sort;
+   - set the tag icons.
+
 ## Design check for visual work
 
 - [ ] Each zone has one job: main = write, side = aware, bottom = review, Home = dashboards.

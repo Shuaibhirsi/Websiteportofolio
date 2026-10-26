@@ -65,7 +65,15 @@ The point of supertags is to define something once and reuse it everywhere, so b
 
 Worked example (Shuaib, 25 Oct 2026):
 - The `#Day` template had 4 stacked dashboards. They now sit in DASHBOAD → 🗄️ Old day dashboards.
-- The template is now ☀️ Morning #Daily prep, 🌙 Evening #Journaling, 🔴 Still on autopilot (`#life pattern`, NOT 🟡, NOT 🟢) and 🎯 Tasks today (`#task`, NOT DONE, Due date < PARENT+1).
+- 25 Oct: the template held ☀️ Morning #Daily prep, 🌙 Evening #Journaling, 🔴 Still on autopilot and 🎯 Tasks today.
+- 26 Oct, after the person chose "Workbench + side panel": the template keeps only the two prompts. Five searches were imported on a past day page for the person to move into the `#day` tag's Related content:
+  - 🎯 Tasks today: `#task`, NOT DONE, Due date < PARENT+1;
+  - 🤝 Meetings today: `#meetings` OR `#event`, Date overlaps PARENT;
+  - 🔴 Still on autopilot: `#life pattern`, NOT 🟡, NOT 🟢;
+  - ✅ Done today: DONE LAST 1 DAYS;
+  - 📅 This week: calendar view of tasks due PARENT-1 < Due date < PARENT+8.
+
+  Side boxes go on the right, review boxes at the bottom. Today's empty page was left alone so the template can fill it when opened.
 - `#Journaling` gained the shared Linked pattern field plus a new Linked experiment field (instance of `#corrective experience`).
 
 ## Procedure
