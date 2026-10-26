@@ -56,7 +56,7 @@ The point of supertags is to define something once and reuse it everywhere, so b
 - **Find the person's own daily tags first.** Look for morning and evening tags they already use (`search_nodes` for instances), e.g. #Daily prep or #Journaling. Reuse them before creating anything.
 - **The `#day` template** is the tag's non-field children; every new day gets a copy. Put in:
   - tagged nodes of their daily tags, e.g. `- ☀️ Morning #[[^dailyPrepId]]` and `- 🌙 Evening #[[^journalingId]]`. Their fields appear on each day, ready to fill;
-  - a few live searches as direct children, using PARENT for "this day" (e.g. tasks with Due date < PARENT+1).
+  - a few live searches as direct children, using PARENT for "this day" (e.g. tasks with Due date < PARENT+1). Lists that must show on **every** day are better in the tag's Related content, which renders on all days, including ones created before the template changed. See `visual-design.md`.
 - **Clear out the old.** Move old template children to an archive node such as "🗄️ Old day dashboards" with `move_node`. Days already written keep their own copies, which have different IDs.
 - **Link working tags in with shared fields.** Add existing instance fields to the daily tag (`- [[^fieldId]]::`, e.g. Linked pattern → `#life pattern`) rather than new look-alikes. In a field, typing a new title creates the linked node, so writing on the day creates the record.
 - **Put quick fields first** on each working tag, with the deeper and ✨ AI fields last (reorder by moving the tag's field tuples).

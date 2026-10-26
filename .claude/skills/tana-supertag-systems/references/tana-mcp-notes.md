@@ -83,7 +83,7 @@ There is no tool for: command nodes, a tag's command menu or event triggers, tag
 - Formatting: `**bold**`, `__italic__`, `^^highlight^^`, links `[name](https://…)`.
 - Tana Paste is for small results, not bulk import.
 
-Views: `%%view:list|table|cards|tabs|calendar|sidemenu%%`, placed on the parent whose children are shown (for a search, on the search node).
+Views: `%%view:table|cards|tabs|calendar|sidemenu%%`, placed on the parent whose children are shown (for a search, on the search node). `%%view:list%%` and `%%view:outline%%` are **not** recognised: they stay in the node's name as text (verified 26 Oct 2026). Leave Outline unmarked, and set List (navigation), Group, Sort and Display in the UI.
 
 ### Search nodes
 

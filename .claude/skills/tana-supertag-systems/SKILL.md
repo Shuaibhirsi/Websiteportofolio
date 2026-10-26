@@ -82,6 +82,7 @@ Verification falls back instead of blocking: an unreadable source becomes a labe
 ## 5. Build: design and build order
 
 Design:
+- **For any page people look at** (day page, dashboard, entity page), also read `references/visual-design.md`: placement zones, views by job, one icon per type, and what the MCP can set.
 - **First read `references/second-brain-design.md` and answer its design check.** Every structure lives in a supertag or its template, reuses the person's own tags and fields, links records with instance fields, and surfaces through searches in templates. Never build one-off structures on a single node.
 - Split reference cards (pre-filled instances) from working records (what the person logs). Link records to cards with `instance` fields, so each card can hold live searches of everything linked to it.
 - Use the workspace palette and emoji-first descriptions and options. Show progress as options (▱▱▱▱▱ to ▰▰▰▰▰) and status as 🔴/🟡/🟢. Include a ❔ "Not sure" option, and allow several values where the honest answer can be "several".
@@ -142,6 +143,7 @@ Finish with a short report:
 ## Reference files
 
 - `references/second-brain-design.md`: the capture → connect → surface loop, design principles and the design check to run before every proposal.
+- `references/visual-design.md`: what Tana creators do (with sources and tiers), placement zones, views by job, icons and banners, and what the MCP can set.
 - `references/tana-concepts.md`: how Tana Outliner works, with sources: owners and references, trash, supertags, fields, commands, searches, workspace layout, templates, schema audit, MCP.
 - `references/repair-playbook.md`: the trash and broken-link audit, audit traps, the repair table and verification.
 - `references/organize-playbook.md`: second-brain principles, the hub pattern (with Shuaib's categories as a worked example), the classification procedure and upkeep.
